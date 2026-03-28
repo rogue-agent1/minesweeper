@@ -1,37 +1,45 @@
 #!/usr/bin/env python3
-"""Minesweeper game."""
-import sys, random
+"""Minesweeper game logic."""
+import random
 class Minesweeper:
-    def __init__(self,w=10,h=10,mines=15):
-        self.w,self.h=w,h; random.seed(42)
-        self.mines=set(); self.revealed=set(); self.flagged=set()
-        while len(self.mines)<mines:
-            self.mines.add((random.randint(0,h-1),random.randint(0,w-1)))
-    def count(self,r,c):
-        return sum(1 for dr in [-1,0,1] for dc in [-1,0,1]
-                   if (dr or dc) and (r+dr,c+dc) in self.mines)
+    def __init__(self,rows=9,cols=9,mines=10):
+        self.rows=rows;self.cols=cols;self.mines=mines
+        self.board=[[0]*cols for _ in range(rows)];self.revealed=[[False]*cols for _ in range(rows)]
+        self.flagged=[[False]*cols for _ in range(rows)];self.game_over=False;self.won=False
+        positions=random.sample([(r,c) for r in range(rows) for c in range(cols)],mines)
+        for r,c in positions: self.board[r][c]=-1
+        for r in range(rows):
+            for c in range(cols):
+                if self.board[r][c]==-1: continue
+                self.board[r][c]=sum(1 for dr in [-1,0,1] for dc in [-1,0,1] if 0<=r+dr<rows and 0<=c+dc<cols and self.board[r+dr][c+dc]==-1)
     def reveal(self,r,c):
-        if (r,c) in self.revealed or not(0<=r<self.h and 0<=c<self.w): return
-        self.revealed.add((r,c))
-        if (r,c) in self.mines: return False
-        if self.count(r,c)==0:
+        if self.game_over or self.revealed[r][c] or self.flagged[r][c]: return
+        self.revealed[r][c]=True
+        if self.board[r][c]==-1: self.game_over=True;return
+        if self.board[r][c]==0:
             for dr in [-1,0,1]:
                 for dc in [-1,0,1]:
-                    if dr or dc: self.reveal(r+dr,c+dc)
-        return True
-    def display(self,show_all=False):
-        for r in range(self.h):
-            row=''
-            for c in range(self.w):
-                if show_all and (r,c) in self.mines: row+='*'
-                elif (r,c) in self.revealed:
-                    if (r,c) in self.mines: row+='*'
-                    else:
-                        n=self.count(r,c); row+=str(n) if n else '.'
-                else: row+='■'
-            print(f"  {row}")
-g=Minesweeper()
-# Auto-play: reveal safe corners
-for r,c in [(0,0),(0,9),(9,0),(9,9),(5,5)]: g.reveal(r,c)
-g.display()
-print(f"\nRevealed: {len(g.revealed)}/{g.w*g.h-len(g.mines)} safe cells")
+                    nr,nc=r+dr,c+dc
+                    if 0<=nr<self.rows and 0<=nc<self.cols: self.reveal(nr,nc)
+        self._check_win()
+    def flag(self,r,c): self.flagged[r][c]=not self.flagged[r][c]
+    def _check_win(self):
+        unrevealed=sum(1 for r in range(self.rows) for c in range(self.cols) if not self.revealed[r][c])
+        if unrevealed==self.mines: self.won=True;self.game_over=True
+    def display(self):
+        for r in range(self.rows):
+            row=""
+            for c in range(self.cols):
+                if self.flagged[r][c]: row+="F "
+                elif not self.revealed[r][c]: row+="# "
+                elif self.board[r][c]==-1: row+="* "
+                elif self.board[r][c]==0: row+="  "
+                else: row+=f"{self.board[r][c]} "
+            print(row)
+if __name__=="__main__":
+    random.seed(42);g=Minesweeper(5,5,3)
+    safe=[(r,c) for r in range(5) for c in range(5) if g.board[r][c]!=-1]
+    g.reveal(safe[0][0],safe[0][1])
+    revealed=sum(1 for r in range(5) for c in range(5) if g.revealed[r][c])
+    print(f"Revealed {revealed} cells"); g.display()
+    print("Minesweeper OK")
