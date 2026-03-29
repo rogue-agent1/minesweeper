@@ -11,8 +11,16 @@ for r in range(10):
 g.reveal(*safe)
 assert len(g.revealed) > 0
 assert not g.game_over
-g.flag(0,0)
-assert (0,0) in g.flagged
+# Flag an unrevealed non-mine cell
+flag_target = None
+for r2 in range(10):
+    for c2 in range(10):
+        if (r2,c2) not in g.revealed and (r2,c2) not in g.mines:
+            flag_target = (r2,c2); break
+    if flag_target: break
+if flag_target:
+    g.flag(*flag_target)
+    assert flag_target in g.flagged
 s = g.stats()
 assert s["mines"] == 5
 print("Minesweeper tests passed")
