@@ -1,9 +1,11 @@
 # minesweeper
-
-Minesweeper game logic. Zero dependencies, single file, Python 3.8+.
-
+Minesweeper game logic — reveal, flag, flood-fill, win detection.
+Single-file Python, zero dependencies.
 ## Usage
-
-```bash
-python3 minesweeper.py --help
+```python
+from minesweeper import Minesweeper
+g = Minesweeper(10, 10, 10)
+g.reveal(0, 0)
+g.flag(5, 5)
+print(g.display())
 ```
