@@ -1,14 +1,9 @@
-# minesweeper
+# minesweeper-cli
 
-Minesweeper board generator
+Minesweeper terminal game. Zero-dependency, single-file Python CLI.
 
 ## Usage
 
 ```bash
 python3 minesweeper.py --help
 ```
-
-## Features
-
-- Zero dependencies (Python 3.8+)
-- Single file implementation
