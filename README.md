@@ -1,13 +1,14 @@
-# Minesweeper
+# minesweeper
 
-Minesweeper game logic.
+Minesweeper board generator
 
 ## Usage
 
 ```bash
-python3 minesweeper.py
+python3 minesweeper.py --help
 ```
 
-## License
+## Features
 
-MIT
+- Zero dependencies (Python 3.8+)
+- Single file implementation
