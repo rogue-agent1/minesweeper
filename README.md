@@ -1,6 +1,6 @@
-# minesweeper-cli
+# minesweeper
 
-Minesweeper terminal game. Zero-dependency, single-file Python CLI.
+Minesweeper game logic. Zero dependencies, single file, Python 3.8+.
 
 ## Usage
 
